@@ -93,7 +93,8 @@ class ResidualEncoderUNet(nn.Module):
                  deep_supervision: bool = False,
                  block: Union[Type[BasicBlockD], Type[BottleneckD]] = BasicBlockD,
                  bottleneck_channels: Union[int, List[int], Tuple[int, ...]] = None,
-                 stem_channels: int = None
+                 stem_channels: int = None,
+                 reconstruction: bool = False
                  ):
         super().__init__()
         if isinstance(n_blocks_per_stage, int):
@@ -111,7 +112,8 @@ class ResidualEncoderUNet(nn.Module):
                                        n_blocks_per_stage, conv_bias, norm_op, norm_op_kwargs, dropout_op,
                                        dropout_op_kwargs, nonlin, nonlin_kwargs, block, bottleneck_channels,
                                        return_skips=True, disable_default_stem=False, stem_channels=stem_channels)
-        self.decoder = UNetDecoder(self.encoder, num_classes, n_conv_per_stage_decoder, deep_supervision)
+        self.decoder = UNetDecoder(self.encoder, num_classes, n_conv_per_stage_decoder, deep_supervision, 
+                                   reconstruction=reconstruction)
 
     def forward(self, x):
         skips = self.encoder(x)
